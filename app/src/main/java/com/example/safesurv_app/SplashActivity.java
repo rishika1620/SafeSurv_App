@@ -17,6 +17,9 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        Intent serviceIntent = new Intent(SplashActivity.this, CameraAccessService.class);
+        this.startService(serviceIntent);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
