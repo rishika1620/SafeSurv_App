@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.SearchView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,13 +25,14 @@ public class AppsAccessingInternetActivity extends AppCompatActivity {
     private showAppAdapter internetAppAdapter;
     Cursor cursor;
 
-    SwitchCompat switchPermissionsCamera;
+    SearchView searchViewInternet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_apps_accessing_internet);
+        searchViewInternet = findViewById(R.id.searchView_internetapps);
 
         //switchPermissionsCamera = findViewById(R.id.swicthPermission);
 
@@ -46,6 +48,19 @@ public class AppsAccessingInternetActivity extends AppCompatActivity {
         recyclerView.setAdapter(internetAppAdapter);
 
         getSupportActionBar().setSubtitle("Total : " + internetApps.size());
+
+        searchViewInternet.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                internetAppAdapter.filter(newText);
+                return false;
+            }
+        });
 
     }
 

@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.SearchView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBar;
@@ -23,17 +24,15 @@ public class AppAccessingMicrophoneActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private showAppAdapter microphoneAppAdapter;
-    SwitchCompat switchPermissionsMicrophone;
-    Cursor cursor;
+    SearchView searchViewMicrophone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_app_accessing_microphone);
+        searchViewMicrophone = findViewById(R.id.searchView_microphoneapps);
 
-
-        //switchPermissionsMicrophone = findViewById(R.id.swicthPermission);
         getSupportActionBar().setTitle("App Accessing Microphone");
 
         recyclerView = findViewById(R.id.recyclerViewMicrophone);
@@ -45,6 +44,19 @@ public class AppAccessingMicrophoneActivity extends AppCompatActivity {
         microphoneAppAdapter = new showAppAdapter(this, microphoneApps);
         recyclerView.setAdapter(microphoneAppAdapter);
         getSupportActionBar().setSubtitle("Total : " + microphoneApps.size());
+
+        searchViewMicrophone.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                microphoneAppAdapter.filter(newText);
+                return false;
+            }
+        });
     }
 
     private List<ApplicationInfo> getMicrophoneApps() {

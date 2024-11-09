@@ -127,7 +127,7 @@ public class CameraAccessService extends Service {
 
     private void checkCameraState() {
         // Check the camera state
-        try {
+        /*try {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
                 boolean cameraAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
@@ -140,7 +140,39 @@ public class CameraAccessService extends Service {
                     //logCameraStatus("Camera is ON");
                 } else if (!cameraAvailable && isCameraOn) {
                     isCameraOn = false;
-                   /*logCameraStatus("Camera is OFF");*/
+                   *//*logCameraStatus("Camera is OFF");*//*
+                }
+            }
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+        // Repeat the check
+        new Handler().postDelayed(this::checkCameraState, 1000);*/ // Check every second
+        try {
+            for (String cameraId : cameraManager.getCameraIdList()) {
+                CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+                boolean cameraAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+
+                if (cameraAvailable && !isCameraOn) {
+                    isCameraOn = true;
+                    String appName = getForegroundApp();
+
+                    // Broadcast the camera usage
+                    Intent intent = new Intent("com.example.safesurv_app.CAMERA_USAGE");
+                    intent.putExtra("appName", appName);
+                    sendBroadcast(intent);
+
+                    logCameraStatus("Camera is ON, used by: " + appName);
+                } else if (!cameraAvailable && isCameraOn) {
+                    isCameraOn = false;
+
+                    // Broadcast the camera being turned off
+                    Intent intent = new Intent("com.example.safesurv_app.CAMERA_USAGE");
+                    intent.putExtra("appName", ""); // Empty appName to signify camera off
+                    sendBroadcast(intent);
+
+                    logCameraStatus("Camera is OFF");
                 }
             }
         } catch (CameraAccessException e) {
